@@ -17,8 +17,11 @@ export const redisProvider: Provider = {
       port,
       ...(password ? { password } : {}),
       db,
+      connectTimeout: 3000,
       maxRetriesPerRequest: 3,
-      retryStrategy: () => null
+      retryStrategy: (times: number) => {
+        if (times > 5) return null
+      }
     })
   }
 }
