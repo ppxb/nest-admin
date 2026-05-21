@@ -1,8 +1,8 @@
 import { Provider } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import IORedis from 'ioredis'
-import { RedisConfig } from '~/config/redis.config'
 
+import { RedisConfig } from '~/config/redis.config'
 import { REDIS } from '~/shared/constants/inject-tokens'
 
 export type RedisClient = IORedis
