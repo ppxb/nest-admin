@@ -2,9 +2,10 @@ import { Module } from '@nestjs/common'
 import { ConfigModule, ConfigService } from '@nestjs/config'
 import { LoggerModule } from 'nestjs-pino'
 
-import { AppConfig, appConfig } from '~/config/app.config'
-import { AppController } from './app.controller'
-import { AppService } from './app.service'
+import { ConfigKeyPaths, configs, AppConfig } from '~/config'
+import { RedisModule } from '~/redis/redis.module'
+import { HealthModule } from '~/health/health.module'
+import { createLoggerOptions } from './bootstrap/logger'
 
 const mode = process.env.MODE ?? 'development'
 
@@ -14,34 +15,19 @@ const mode = process.env.MODE ?? 'development'
       isGlobal: true,
       expandVariables: true,
       envFilePath: [`.env.local`, `.env.${mode}`, '.env'],
-      load: [appConfig]
+      load: [...configs]
     }),
 
     LoggerModule.forRootAsync({
       inject: [ConfigService],
-      useFactory: (config: ConfigService) => {
-        const { logLevel, isDev } = config.get<AppConfig>('app', { infer: true })
-
-        return {
-          pinoHttp: {
-            level: logLevel,
-            transport: isDev
-              ? {
-                  target: 'pino-pretty',
-                  options: {
-                    colorize: true,
-                    singleLine: true,
-                    messageFormat: '[{context}] {msg}',
-                    ignore: 'hostname,context'
-                  }
-                }
-              : undefined
-          }
-        }
+      useFactory: (config: ConfigService<ConfigKeyPaths>) => {
+        const { logLevel, isDev } = config.get<AppConfig>('app')!
+        return createLoggerOptions(logLevel, isDev)
       }
-    })
-  ],
-  controllers: [AppController],
-  providers: [AppService]
+    }),
+
+    RedisModule,
+    HealthModule
+  ]
 })
 export class AppModule {}
