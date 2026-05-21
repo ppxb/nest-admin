@@ -1,4 +1,4 @@
-import { registerAs } from '@nestjs/config'
+import { ConfigType, registerAs } from '@nestjs/config'
 import { z } from 'zod'
 
 const schema = z.object({
@@ -23,4 +23,4 @@ export const appConfig = registerAs('app', () => {
   }
 })
 
-export type AppConfig = ReturnType<typeof appConfig>
+export type AppConfig = ConfigType<typeof appConfig>
