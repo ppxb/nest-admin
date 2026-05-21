@@ -20,7 +20,7 @@ export function createLoggerOptions(logLevel: string, isDev: boolean): Params {
       customProps: () => ({ context: 'HTTP' }),
       customSuccessMessage: (req, res, responseTime) =>
         `✨ ${req.method} ${req.url} - ${res.statusCode} (${responseTime}ms)`,
-      customErrorMessage: (req, _, err) => `❌ ${req.method} ${req.url} failed | ${err.message}`
+      customErrorMessage: req => `❌ ${req.method} ${req.url} failed`
     }
   }
 }

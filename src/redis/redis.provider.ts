@@ -15,10 +15,10 @@ export const redisProvider: Provider = {
     return new IORedis({
       host,
       port,
-      password,
+      ...(password ? { password } : {}),
       db,
-      lazyConnect: true,
-      maxRetriesPerRequest: 3
+      maxRetriesPerRequest: 3,
+      retryStrategy: () => null
     })
   }
 }

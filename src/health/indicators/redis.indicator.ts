@@ -16,11 +16,11 @@ export class RedisIndicator {
 
     try {
       const pong = await this.redis.ping()
-      if (pong !== 'PONG') throw new Error(`Unexpected PING response: ${pong}`)
+      if (pong !== 'PONG') return indicator.down({ error: `Unexpected PING response: ${pong}` })
 
       return indicator.up()
     } catch (err) {
-      throw indicator.down({ error: String(err) })
+      return indicator.down({ error: String(err) })
     }
   }
 }

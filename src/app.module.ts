@@ -1,11 +1,13 @@
 import { Module } from '@nestjs/common'
 import { ConfigModule, ConfigService } from '@nestjs/config'
+import { APP_FILTER } from '@nestjs/core'
 import { LoggerModule } from 'nestjs-pino'
 
 import { configs, AppConfig } from '~/config'
 import { RedisModule } from '~/redis/redis.module'
 import { HealthModule } from '~/health/health.module'
-import { createLoggerOptions } from './bootstrap/logger'
+import { createLoggerOptions } from '~/bootstrap/logger'
+import { AllExceptionsFilter } from '~/shared/filters/all-exceptions.filter'
 
 const mode = process.env.MODE ?? 'development'
 
@@ -28,6 +30,12 @@ const mode = process.env.MODE ?? 'development'
 
     RedisModule,
     HealthModule
+  ],
+  providers: [
+    {
+      provide: APP_FILTER,
+      useClass: AllExceptionsFilter
+    }
   ]
 })
 export class AppModule {}
